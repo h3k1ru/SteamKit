@@ -54,9 +54,10 @@ namespace SteamKit2
 
         void DisconnectCore(bool userInitiated, WebSocketContext specificContext)
         {
-            if (currentContext != null && (specificContext == null || currentContext == specificContext))
+            var oldContext = Interlocked.Exchange(ref currentContext, null);
+            if (oldContext != null && (specificContext == null || oldContext == specificContext))
             {
-                currentContext.Dispose();
+                oldContext.Dispose();
 
                 Disconnected?.Invoke(this, new DisconnectedEventArgs(userInitiated));
             }
@@ -64,8 +65,6 @@ namespace SteamKit2
             {
                 specificContext?.Dispose();
             }
-
-            currentContext = null;
         }
     }
 }
