@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,30 +17,14 @@ namespace SteamKit2
 {
     abstract class MachineInfoProvider
     {
-        public static MachineInfoProvider GetProvider(bool randomInfoProvider = false)
+        public static MachineInfoProvider GetProvider()
         {
-            if (randomInfoProvider) {
-                return new RandomInfoProvider();
-            }
             return new DefaultInfoProvider();
         }
 
         public abstract byte[] GetMachineGuid();
         public abstract byte[] GetMacAddress();
         public abstract byte[] GetDiskId();
-    }
-
-    class RandomInfoProvider : MachineInfoProvider {
-        readonly Random Random = new Random();
-        public override byte[] GetMachineGuid() => GenerateRandomBytes();
-        public override byte[] GetDiskId() => GenerateRandomBytes();
-        public override byte[] GetMacAddress() => GenerateRandomBytes();
-
-        byte[] GenerateRandomBytes() {
-            byte[] buffer = new byte[32];
-            Random.NextBytes(buffer);
-            return buffer;
-        }
     }
 
     class DefaultInfoProvider : MachineInfoProvider
@@ -70,13 +53,6 @@ namespace SteamKit2
         {
             return Encoding.UTF8.GetBytes(random_string(24));
         }
-    }
-
-    /// <summary>
-    /// Generator of the random machine ID
-    /// </summary>
-    public static class RandomHardwareInfoGenerator {
-        public static string GenerateRandomMachineID() => HardwareUtils.GenerateRandomMachineID();
     }
 
     static class HardwareUtils
@@ -111,32 +87,6 @@ namespace SteamKit2
             {
                 this.KeyValues["333"] = new KeyValue( value: value );
             }
-        }
-
-        public static string GenerateRandomMachineID() {
-
-
-            var machineId = new MachineID();
-
-            MachineInfoProvider provider = new RandomInfoProvider();
-
-
-
-            machineId.SetBB3( GetHexString( provider.GetMachineGuid() ) );
-            machineId.SetFF2( GetHexString( provider.GetMacAddress() ) );
-            machineId.Set3B3( GetHexString( provider.GetDiskId() ) );
-
-            // 333 is some sort of user supplied data and is currently unused
-
-            byte[] buffer;
-            using ( MemoryStream ms = new MemoryStream() )
-            {
-                machineId.WriteToStream( ms );
-
-                buffer = ms.ToArray();
-            }
-
-            return Convert.ToBase64String(buffer);
         }
 
         public static byte[] GenerateMachineID()
