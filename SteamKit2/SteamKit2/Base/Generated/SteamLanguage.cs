@@ -1810,7 +1810,6 @@ namespace SteamKit2
 	{
 		HasRichPresence = 1,
 		InJoinableGame = 2,
-		Golden = 4,
 		ClientTypeWeb = 256,
 		ClientTypeMobile = 512,
 		ClientTypeTenfoot = 1024,
