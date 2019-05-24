@@ -11,6 +11,7 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace SteamKit2
 {
@@ -67,7 +68,7 @@ namespace SteamKit2
             /// <exception cref="HttpRequestException">An network error occurred when performing the request.</exception>
             /// <exception cref="WebAPIRequestException">A network error occurred when performing the request.</exception>
             /// <exception cref="InvalidDataException">An error occured when parsing the response from the WebAPI.</exception>
-            public KeyValue Call( string func, int version = 1, Dictionary<string, string> args = null )
+            public KeyValue Call( string func, int version = 1, Dictionary<string, object> args = null )
                 => Call( HttpMethod.Get, func, version, args );
 
 
@@ -83,7 +84,7 @@ namespace SteamKit2
             /// <exception cref="HttpRequestException">An network error occurred when performing the request.</exception>
             /// <exception cref="WebAPIRequestException">A network error occurred when performing the request.</exception>
             /// <exception cref="InvalidDataException">An error occured when parsing the response from the WebAPI.</exception>
-            public KeyValue Call( HttpMethod method, string func, int version = 1, Dictionary<string, string> args = null )
+            public KeyValue Call( HttpMethod method, string func, int version = 1, Dictionary<string, object> args = null )
             {
                 var callTask = asyncInterface.CallAsync( method, func, version, args );
 
@@ -209,7 +210,7 @@ namespace SteamKit2
             /// <exception cref="HttpRequestException">An network error occurred when performing the request.</exception>
             /// <exception cref="WebAPIRequestException">A network error occurred when performing the request.</exception>
             /// <exception cref="InvalidDataException">An error occured when parsing the response from the WebAPI.</exception>
-            public Task<KeyValue> CallAsync( HttpMethod method, string func, int version = 1, Dictionary<string, string> args = null )
+            public Task<KeyValue> CallAsync( HttpMethod method, string func, int version = 1, Dictionary<string, object> args = null )
             {
                 var task = CallAsyncCore( method, func, version, args );
 
@@ -226,7 +227,7 @@ namespace SteamKit2
                 return task;
             }
                 
-            async Task<KeyValue> CallAsyncCore( HttpMethod method, string func, int version = 1, Dictionary<string, string> args = null )
+            async Task<KeyValue> CallAsyncCore( HttpMethod method, string func, int version = 1, Dictionary<string, object> args = null )
             {
                 if ( method == null )
                 {
@@ -240,7 +241,7 @@ namespace SteamKit2
 
                 if ( args == null )
                 {
-                    args = new Dictionary<string, string>();
+                    args = new Dictionary<string, object>();
                 }
 
 
@@ -268,11 +269,21 @@ namespace SteamKit2
                 // append any args
                 paramBuilder.Append( string.Join( "&", args.Select( kvp =>
                 {
-                    // TODO: the WebAPI is a special snowflake that needs to appropriately handle url encoding
-                    // this is in contrast to the steam3 content server APIs which use an entirely different scheme of encoding
+                    string key = HttpUtility.UrlEncode( kvp.Key );
+                    string value;
 
-                    string key = WebHelpers.UrlEncode( kvp.Key );
-                    string value = kvp.Value; // WebHelpers.UrlEncode( kvp.Value );
+                    if ( kvp.Value == null )
+                    {
+                        value = string.Empty;
+                    }
+                    else if ( kvp.Value is byte[] buffer )
+                    {
+                        value = HttpUtility.UrlEncode( buffer );
+                    }
+                    else
+                    {
+                        value = HttpUtility.UrlEncode( kvp.Value.ToString() );
+                    }
 
                     return string.Format( "{0}={1}", key, value );
                 } ) ) );
@@ -355,21 +366,29 @@ namespace SteamKit2
             /// </exception>
             public override bool TryInvokeMember( InvokeMemberBinder binder, object[] args, out object result )
             {
-                if ( binder.CallInfo.ArgumentNames.Count != args.Length )
+                IDictionary<string, object> methodArgs;
+
+                if ( args.Length == 1 && binder.CallInfo.ArgumentNames.Count == 0 && args[ 0 ] is IDictionary<string, object> explicitArgs )
                 {
-                    throw new InvalidOperationException( "Argument mismatch in API call. All parameters must be passed as named arguments." );
+                    methodArgs = explicitArgs;
+                }
+                else if ( binder.CallInfo.ArgumentNames.Count != args.Length )
+                {
+                    throw new InvalidOperationException( "Argument mismatch in API call. All parameters must be passed as named arguments, or as a single un-named dictionary argument." );
+                }
+                else
+                {
+                    methodArgs = Enumerable.Range( 0, args.Length )
+                        .ToDictionary( 
+                            x => binder.CallInfo.ArgumentNames[ x ],
+                            x => args[ x ] );
                 }
 
-                var apiArgs = new Dictionary<string, string>();
-
+                var apiArgs = new Dictionary<string, object>();
                 var requestMethod = HttpMethod.Get;
 
-                // convert named arguments into key value pairs
-                for ( int x = 0 ; x < args.Length ; x++ )
+                foreach ( var ( argName, argValue ) in methodArgs )
                 {
-                    string argName = binder.CallInfo.ArgumentNames[ x ];
-                    object argValue = args[ x ];
-
                     // method is a reserved param for selecting the http request method
                     if ( argName.Equals( "method", StringComparison.OrdinalIgnoreCase ) )
                     {
@@ -377,21 +396,21 @@ namespace SteamKit2
                         continue;
                     }
                     // flatten lists
-                    else if ( argValue is IEnumerable && !( argValue is string ) )
+                    else if ( argValue is IEnumerable && !( argValue is string || argValue is byte[] ) )
                     {
                         int index = 0;
-                        IEnumerable enumerable = argValue as IEnumerable;
+                        var enumerable = argValue as IEnumerable;
 
                         foreach ( object value in enumerable )
                         {
-                            apiArgs.Add( String.Format( "{0}[{1}]", argName, index++ ), value.ToString() );
+                            apiArgs.Add( string.Format( "{0}[{1}]", argName, index++ ), value );
                         }
 
                         continue;
                     }
 
 
-                    apiArgs.Add( argName, argValue.ToString() );
+                    apiArgs.Add( argName, argValue );
                 }
 
                 Match match = funcNameRegex.Match( binder.Name );
@@ -508,34 +527,6 @@ namespace SteamKit2
             };
 
             return client;
-        }
-    }
-
-    /// <summary>
-    /// Thrown when WebAPI request fails.
-    /// </summary>
-    public sealed class WebAPIRequestException : HttpRequestException
-    {
-        /// <summary>
-        /// Represents the status code of the HTTP response.
-        /// </summary>
-        public HttpStatusCode StatusCode { get; private set; }
-
-        /// <summary>
-        /// Represents the collection of HTTP response headers.
-        /// </summary>
-        public HttpResponseHeaders Headers { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebAPIRequestException"/> class.
-        /// </summary>
-        /// <param name="message">The message that describes the error.</param>
-        /// <param name="response">HTTP response message including the status code and data.</param>
-        public WebAPIRequestException(string message, HttpResponseMessage response)
-            : base(message)
-        {
-            this.StatusCode = response.StatusCode;
-            this.Headers = response.Headers;
         }
     }
 }
