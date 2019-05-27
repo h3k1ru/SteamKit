@@ -29,7 +29,7 @@ namespace SteamKit2.Discovery
     /// </summary>
     public class SmartCMServerList
     {
-        [DebuggerDisplay("ServerInfo ({Record}, {Protocol}, Bad: {LastBadConnectionTimeUtc.HasValue})")]
+        [DebuggerDisplay("ServerInfo ({EndPoint}, {Protocol}, Bad: {LastBadConnectionDateTimeUtc.HasValue})")]
         class ServerInfo
         {
             public ServerInfo( ServerRecord record, ProtocolTypes protocolType )
@@ -52,11 +52,7 @@ namespace SteamKit2.Discovery
         {
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if ( servers == null )
-            {
-                servers = new Collection<ServerInfo>();
-            }
-            
+            servers = new Collection<ServerInfo>();
             listLock = new object();
             BadConnectionMemoryTimeSpan = TimeSpan.FromMinutes( 5 );
         }
@@ -66,7 +62,7 @@ namespace SteamKit2.Discovery
         Task listTask;
 
         object listLock;
-        static Collection<ServerInfo> servers;
+        Collection<ServerInfo> servers;
 
         private void StartFetchingServers()
         {
