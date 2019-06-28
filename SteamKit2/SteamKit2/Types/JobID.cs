@@ -230,12 +230,12 @@ namespace SteamKit2
             if ( dueToRemoteFailure )
             {
                 // if steam informs us of a remote failure, we cancel with our exception
-                tcs.TrySetException( new AsyncJobFailedException() );
+                tcs?.TrySetException( new AsyncJobFailedException() );
             }
             else
             {
                 // if we time out, we trigger a normal cancellation
-                tcs.TrySetCanceled();
+                tcs?.TrySetCanceled();
             }
             
         }
