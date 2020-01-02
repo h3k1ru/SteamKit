@@ -53,7 +53,7 @@ namespace SteamKit2
         /// <param name="log">An optional logging context for log messages.</param>
         public NetHookNetworkListener(ILogContext? log = null)
         {
-            this.log = log ?? DebugLogContext.Instance;
+            this.log = log ?? new DebugLogContext();
 
             var directory = Path.GetDirectoryName( new Uri( GetType().Assembly.CodeBase ).LocalPath );
             LogDirectory = Path.Combine(
@@ -73,7 +73,7 @@ namespace SteamKit2
         /// <param name="log">An optional logging context for log messages.</param>
         public NetHookNetworkListener( string path, ILogContext? log = null )
         {
-            this.log = log;
+            this.log = log ?? new DebugLogContext();
 
             if ( !Directory.Exists( path ) )
             {

@@ -827,7 +827,7 @@ namespace SteamKit2
             {
                 var type = ( Type )input.ReadByte();
 
-                if ( type == Type.End )
+                if ( type == Type.End || (byte)type == 11 )
                 {
                     break;
                 }

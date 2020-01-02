@@ -160,7 +160,7 @@ namespace SteamKit2.Internal
         /// <param name="proxy">
         /// The proxy server that should be used to connect to CM server (only WebSocketConnection is supported).
         /// </param>
-        public void Connect( ServerRecord cmServer = null, WebProxy? proxy = null )
+        public void Connect( ServerRecord? cmServer = null, WebProxy? proxy = null )
         {
             lock ( connectionLock )
             {
@@ -232,7 +232,7 @@ namespace SteamKit2.Internal
         /// <summary>
         /// Disconnects this client.
         /// </summary>
-        public void Disconnect() => Disconnect( userInitiated: true );
+        public void Disconnect() => Disconnect( userInitiated: true ); 
 
         void Disconnect( bool userInitiated)
         {
