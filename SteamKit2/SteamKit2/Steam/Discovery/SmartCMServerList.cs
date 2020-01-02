@@ -63,7 +63,7 @@ namespace SteamKit2.Discovery
 
         readonly SteamConfiguration configuration;
 
-        Task listTask;
+        Task? listTask;
 
         object listLock;
         static Collection<ServerInfo> servers;
@@ -75,7 +75,7 @@ namespace SteamKit2.Discovery
                 // if the server list has been populated, no need to perform any additional work
                 if ( servers.Count > 0 )
                 {
-                    listTask = Task.Delay( 0 );
+                    listTask = Task.CompletedTask;
                 }
                 else if ( listTask == null || listTask.IsFaulted || listTask.IsCanceled )
                 {
@@ -90,7 +90,7 @@ namespace SteamKit2.Discovery
 
             try
             {
-                listTask.GetAwaiter().GetResult();
+                listTask!.GetAwaiter().GetResult();
                 return true;
             }
             catch ( Exception ex )
@@ -252,7 +252,7 @@ namespace SteamKit2.Discovery
         /// Perform the actual score lookup of the server list and return the candidate
         /// </summary>
         /// <returns>IPEndPoint candidate</returns>
-        private ServerRecord GetNextServerCandidateInternal( ProtocolTypes supportedProtocolTypes )
+        private ServerRecord? GetNextServerCandidateInternal( ProtocolTypes supportedProtocolTypes )
         {
             lock ( listLock )
             {
@@ -286,7 +286,7 @@ namespace SteamKit2.Discovery
         /// </summary>
         /// <param name="supportedProtocolTypes">The minimum supported <see cref="ProtocolTypes"/> of the server to return.</param>
         /// <returns>An <see cref="System.Net.IPEndPoint"/>, or null if the list is empty.</returns>
-        public ServerRecord GetNextServerCandidate( ProtocolTypes supportedProtocolTypes )
+        public ServerRecord? GetNextServerCandidate( ProtocolTypes supportedProtocolTypes )
         {
             if ( !WaitForServersFetched() )
             {
@@ -301,10 +301,10 @@ namespace SteamKit2.Discovery
         /// </summary>
         /// <param name="supportedProtocolTypes">The minimum supported <see cref="ProtocolTypes"/> of the server to return.</param>
         /// <returns>An <see cref="System.Net.IPEndPoint"/>, or null if the list is empty.</returns>
-        public async Task<ServerRecord> GetNextServerCandidateAsync( ProtocolTypes supportedProtocolTypes )
+        public async Task<ServerRecord?> GetNextServerCandidateAsync( ProtocolTypes supportedProtocolTypes )
         {
             StartFetchingServers();
-            await listTask.ConfigureAwait( false );
+            await listTask!.ConfigureAwait( false );
 
             return GetNextServerCandidateInternal( supportedProtocolTypes );
         }

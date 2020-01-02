@@ -16,27 +16,29 @@ namespace SteamKit2
     {
         const uint MAGIC = 0x31305456; // "VT01"
 
-        private Socket socket;
-        private Thread netThread;
-        private NetworkStream netStream;
-        private BinaryReader netReader;
-        private BinaryWriter netWriter;
+        private ILogContext log;
+        private Socket? socket;
+        private Thread? netThread;
+        private NetworkStream? netStream;
+        private BinaryReader? netReader;
+        private BinaryWriter? netWriter;
 
-        private CancellationTokenSource cancellationToken;
+        private CancellationTokenSource? cancellationToken;
         private object netLock;
 
-        public TcpConnection()
+        public TcpConnection(ILogContext log)
         {
+            this.log = log ?? throw new ArgumentNullException( nameof( log ) );
             netLock = new object();
         }
 
-        public event EventHandler<NetMsgEventArgs> NetMsgReceived;
+        public event EventHandler<NetMsgEventArgs>? NetMsgReceived;
 
-        public event EventHandler Connected;
+        public event EventHandler? Connected;
 
-        public event EventHandler<DisconnectedEventArgs> Disconnected;
+        public event EventHandler<DisconnectedEventArgs>? Disconnected;
 
-        public EndPoint CurrentEndPoint { get; private set; }
+        public EndPoint? CurrentEndPoint { get; private set; }
 
         public ProtocolTypes ProtocolTypes => ProtocolTypes.Tcp;
 
@@ -44,7 +46,7 @@ namespace SteamKit2
         {
             try
             {
-                if (socket.Connected)
+                if (socket != null && socket.Connected)
                 {
                     socket.Shutdown(SocketShutdown.Both);
                     socket.Disconnect( true );
@@ -102,19 +104,19 @@ namespace SteamKit2
             // If we have no cancellation token source, we were already Release()'ed
             if (cancellationToken?.IsCancellationRequested ?? true)
             {
-                DebugLog.WriteLine("TcpConnection", "Connection request to {0} was cancelled", CurrentEndPoint);
+                log.LogDebug("TcpConnection", "Connection request to {0} was cancelled", CurrentEndPoint);
                 if (success) Shutdown();
                 Release( userRequestedDisconnect: true );
                 return;
             }
             else if (!success)
             {
-                DebugLog.WriteLine("TcpConnection", "Timed out while connecting to {0}", CurrentEndPoint);
+                log.LogDebug( "TcpConnection", "Timed out while connecting to {0}", CurrentEndPoint);
                 Release( userRequestedDisconnect: false );
                 return;
             }
 
-            DebugLog.WriteLine("TcpConnection", "Connected to {0}", CurrentEndPoint);
+            log.LogDebug( "TcpConnection", "Connected to {0}", CurrentEndPoint);
 
             try
             {
@@ -127,7 +129,7 @@ namespace SteamKit2
                     netThread = new Thread(NetLoop);
                     netThread.Name = "TcpConnection Thread";
 
-                    CurrentEndPoint = socket.RemoteEndPoint;
+                    CurrentEndPoint = socket!.RemoteEndPoint;
                 }
 
                 netThread.Start();
@@ -136,22 +138,24 @@ namespace SteamKit2
             }
             catch (Exception ex)
             {
-                DebugLog.WriteLine("TcpConnection", "Exception while setting up connection to {0}: {1}", CurrentEndPoint, ex);
+                log.LogDebug( "TcpConnection", "Exception while setting up connection to {0}: {1}", CurrentEndPoint, ex);
                 Release( userRequestedDisconnect: false );
             }
         }
 
         private void TryConnect(object sender)
         {
+            DebugLog.Assert( cancellationToken != null, nameof( TcpConnection ), "null CancellationToken in TryConnect" );
+
             int timeout = (int)sender;
             if (cancellationToken.IsCancellationRequested)
             {
-                DebugLog.WriteLine("TcpConnection", "Connection to {0} cancelled by user", CurrentEndPoint);
+                log.LogDebug( "TcpConnection", "Connection to {0} cancelled by user", CurrentEndPoint);
                 Release( userRequestedDisconnect: true );
                 return;
             }
             
-            var asyncResult = socket.BeginConnect(CurrentEndPoint, null, null );
+            var asyncResult = socket!.BeginConnect(CurrentEndPoint, null, null );
             if ( WaitHandle.WaitAny( new WaitHandle[] { asyncResult.AsyncWaitHandle, cancellationToken.Token.WaitHandle }, timeout ) == 0 )
             {
                 try
@@ -161,7 +165,7 @@ namespace SteamKit2
                 }
                 catch ( Exception ex )
                 {
-                    DebugLog.WriteLine( "TcpConnection", "Socket exception while completing connection request to {0}: {1}", CurrentEndPoint, ex );
+                    log.LogDebug( "TcpConnection", "Socket exception while completing connection request to {0}: {1}", CurrentEndPoint, ex );
                     ConnectCompleted( false );
                 }
             }
@@ -188,7 +192,7 @@ namespace SteamKit2
                 socket.SendTimeout = timeout;
 
                 CurrentEndPoint = endPoint;
-                DebugLog.WriteLine( "TcpConnection", "Connecting to {0}...", CurrentEndPoint);
+                log.LogDebug( "TcpConnection", "Connecting to {0}...", CurrentEndPoint);
                 TryConnect( timeout );
             }
 
@@ -213,17 +217,19 @@ namespace SteamKit2
             // poll for readable data every 100ms
             const int POLL_MS = 100;
 
+            DebugLog.Assert( cancellationToken != null, nameof( TcpConnection ), "null cancellationToken in NetLoop" );
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 bool canRead = false;
 
                 try
                 {
-                    canRead = socket.Poll(POLL_MS * 1000, SelectMode.SelectRead);
+                    canRead = socket!.Poll(POLL_MS * 1000, SelectMode.SelectRead);
                 }
                 catch (SocketException ex)
                 {
-                    DebugLog.WriteLine("TcpConnection", "Socket exception while polling: {0}", ex);
+                    log.LogDebug( "TcpConnection", "Socket exception while polling: {0}", ex);
                     break;
                 }
 
@@ -233,7 +239,7 @@ namespace SteamKit2
                     continue;
                 }
 
-                byte[] packData = null;
+                byte[] packData;
 
                 try
                 {
@@ -242,17 +248,17 @@ namespace SteamKit2
                 }
                 catch (IOException ex)
                 {
-                    DebugLog.WriteLine("TcpConnection", "Socket exception occurred while reading packet: {0}", ex);
+                    log.LogDebug("TcpConnection", "Socket exception occurred while reading packet: {0}", ex);
                     break;
                 }
 
                 try
                 {
-                    NetMsgReceived?.Invoke( this, new NetMsgEventArgs( packData, CurrentEndPoint) );
+                    NetMsgReceived?.Invoke( this, new NetMsgEventArgs( packData, CurrentEndPoint! ) );
                 }
                 catch (Exception ex)
                 {
-                    DebugLog.WriteLine("TcpConnection", "Unexpected exception propogated back to NetLoop: {0}", ex);
+                    log.LogDebug( "TcpConnection", "Unexpected exception propogated back to NetLoop: {0}", ex);
                 }
             }
 
@@ -275,7 +281,7 @@ namespace SteamKit2
 
             try
             {
-                packetLen = netReader.ReadUInt32();
+                packetLen = netReader!.ReadUInt32();
                 packetMagic = netReader.ReadUInt32();
             }
             catch (IOException ex)
@@ -305,19 +311,19 @@ namespace SteamKit2
             {
                 if (socket == null || netStream == null)
                 {
-                    DebugLog.WriteLine("TcpConnection", "Attempting to send client data when not connected.");
+                    log.LogDebug( "TcpConnection", "Attempting to send client data when not connected.");
                     return;
                 }
 
                 try
                 {
-                    netWriter.Write((uint)data.Length);
+                    netWriter!.Write((uint)data.Length);
                     netWriter.Write(MAGIC);
                     netWriter.Write(data);
                 }
                 catch (IOException ex)
                 {
-                    DebugLog.WriteLine("TcpConnection", "Socket exception while writing data: {0}", ex);
+                    log.LogDebug( "TcpConnection", "Socket exception while writing data: {0}", ex);
                 }
             }
         }
@@ -337,7 +343,7 @@ namespace SteamKit2
                 }
                 catch (Exception ex)
                 {
-                    DebugLog.WriteLine("TcpConnection", "Socket exception trying to read bound IP: {0}", ex);
+                    log.LogDebug( "TcpConnection", "Socket exception trying to read bound IP: {0}", ex);
                     return IPAddress.None;
                 }
             }

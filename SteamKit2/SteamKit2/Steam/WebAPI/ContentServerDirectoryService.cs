@@ -93,7 +93,7 @@ namespace SteamKit2
 
             foreach ( var child in serverList.Children )
             {
-                string httpsSupport = child[ "https_support" ].AsString();
+                var httpsSupport = child[ "https_support" ].AsString();
                 var protocol = ( httpsSupport == "optional" || httpsSupport == "mandatory" ) ? CDNClient.Server.ConnectionProtocol.HTTPS : CDNClient.Server.ConnectionProtocol.HTTP;
 
                 serverRecords.Add( new CDNClient.Server
@@ -105,7 +105,7 @@ namespace SteamKit2
 
                     Type = child[ "type" ].AsString(),
                     SourceID = child[ "source_id"].AsInteger(),
-                    CellID = (uint)child[ "cell" ].AsInteger(),
+                    CellID = (uint)child[ "cell_id" ].AsInteger(),
 
                     Load = child[ "load" ].AsInteger(),
                     WeightedLoad = child[ "weighted_load" ].AsInteger(),

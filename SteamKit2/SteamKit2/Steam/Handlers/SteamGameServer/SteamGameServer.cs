@@ -24,7 +24,7 @@ namespace SteamKit2
             /// <summary>
             /// Gets or sets the authentication token used to log in as a game server.
             /// </summary>
-            public string Token { get; set; }
+            public string? Token { get; set; }
 
             /// <summary>
             /// Gets or sets the AppID this gameserver will serve.
@@ -50,12 +50,12 @@ namespace SteamKit2
             /// <summary>
             /// Gets or sets the directory the game data is in.
             /// </summary>
-            public string GameDirectory { get; set; }
+            public string? GameDirectory { get; set; }
 
             /// <summary>
             /// Gets or sets the IP address the game server listens on.
             /// </summary>
-            public IPAddress Address { get; set; }
+            public IPAddress? Address { get; set; }
 
             /// <summary>
             /// Gets or sets the port the game server listens on.
@@ -70,7 +70,7 @@ namespace SteamKit2
             /// <summary>
             /// Gets or sets the current version of the game server.
             /// </summary>
-            public string Version { get; set; }
+            public string? Version { get; set; }
         }
 
 
@@ -119,8 +119,8 @@ namespace SteamKit2
             logon.ProtoHeader.client_sessionid = 0;
             logon.ProtoHeader.steamid = gsId.ConvertToUInt64();
 
-            uint localIp = NetHelpers.GetIPAddress( this.Client.LocalIP );
-            logon.Body.obfustucated_private_ip = localIp ^ MsgClientLogon.ObfuscationMask;
+            uint localIp = NetHelpers.GetIPAddress( this.Client.LocalIP! );
+            logon.Body.deprecated_obfustucated_private_ip = localIp ^ MsgClientLogon.ObfuscationMask;
 
             logon.Body.protocol_version = MsgClientLogon.CurrentProtocol;
 
@@ -154,8 +154,8 @@ namespace SteamKit2
             logon.ProtoHeader.client_sessionid = 0;
             logon.ProtoHeader.steamid = gsId.ConvertToUInt64();
 
-            uint localIp = NetHelpers.GetIPAddress( this.Client.LocalIP );
-            logon.Body.obfustucated_private_ip = localIp ^ MsgClientLogon.ObfuscationMask;
+            uint localIp = NetHelpers.GetIPAddress( this.Client.LocalIP! );
+            logon.Body.deprecated_obfustucated_private_ip = localIp ^ MsgClientLogon.ObfuscationMask;
 
             logon.Body.protocol_version = MsgClientLogon.CurrentProtocol;
 
@@ -205,7 +205,7 @@ namespace SteamKit2
 
             if (details.Address != null)
             {
-                status.Body.game_ip_address = NetHelpers.GetIPAddress( details.Address );
+                status.Body.deprecated_game_ip_address = NetHelpers.GetIPAddress( details.Address );
             }
 
             this.Client.Send( status );

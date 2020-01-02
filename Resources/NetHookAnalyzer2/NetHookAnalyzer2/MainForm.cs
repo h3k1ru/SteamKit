@@ -23,8 +23,13 @@ namespace NetHookAnalyzer2
 			specializations = LoadMessageObjectSpecializations();
 		}
 
+#pragma warning disable IDE0069 // Disposable fields should be disposed
+
 		IDisposable itemsListViewFirstColumnHiderDisposable;
 		FileSystemWatcher folderWatcher;
+
+#pragma warning restore IDE0069 // Disposable fields should be disposed
+
 		readonly ISpecialization[] specializations;
 
 		static ISpecialization[] LoadMessageObjectSpecializations()
@@ -49,9 +54,9 @@ namespace NetHookAnalyzer2
 						new ArtifactCacheSubscribedGCSpecialization(),
 						new ArtifactSOMultipleObjectsGCSpecialization(),
 						new ArtifactSOSingleObjectGCSpecialization(),
-                        new UnderlordsCacheSubscribedGCSpecialization(),
-                        new UnderlordsSOMultipleObjectsGCSpecialization(),
-                        new UnderlordsSOSingleObjectGCSpecialization(),
+						new UnderlordsCacheSubscribedGCSpecialization(),
+						new UnderlordsSOMultipleObjectsGCSpecialization(),
+						new UnderlordsSOSingleObjectGCSpecialization(),
 					}
 				}
 			};
@@ -119,7 +124,7 @@ namespace NetHookAnalyzer2
 			}
 			else
 			{
-				predicate = nhi => (nhi.Name.IndexOf(searchTerm, StringComparison.InvariantCultureIgnoreCase) >= 0) ||
+				predicate = nhi => (nhi.EMsg.ToString().IndexOf(searchTerm, StringComparison.InvariantCultureIgnoreCase) >= 0) ||
 					(nhi.InnerMessageName != null && nhi.InnerMessageName.IndexOf(searchTerm, StringComparison.InvariantCultureIgnoreCase) >= 0);
 			}
 
@@ -147,21 +152,27 @@ namespace NetHookAnalyzer2
 			Application.Exit();
 		}
 
-		void OnOpenToolStripMenuItemClick(object sender, EventArgs e)
+		void OnOpenToolStripMenuItemClick( object sender, EventArgs e )
 		{
-			var dialog = new FolderBrowserDialog { ShowNewFolderButton = false };
-			var latestNethookDir = GetLatestNethookDumpDirectory();
-			if (latestNethookDir != null)
-			{
-				dialog.SelectedPath = GetLatestNethookDumpDirectory();
-			}
+			string dumpDirectory;
 
-			if (dialog.ShowDialog() != WinForms.DialogResult.OK)
+			using ( var dialog = new FolderBrowserDialog() )
 			{
-				return;
-			}
+				dialog.ShowNewFolderButton = false;
 
-			var dumpDirectory = dialog.SelectedPath;
+				var latestNethookDir = GetLatestNethookDumpDirectory();
+				if ( latestNethookDir != null )
+				{
+					dialog.SelectedPath = GetLatestNethookDumpDirectory();
+				}
+
+				if ( dialog.ShowDialog() != WinForms.DialogResult.OK )
+				{
+					return;
+				}
+
+				dumpDirectory = dialog.SelectedPath;
+			}
 
 			var dump = new NetHookDump();
 			dump.LoadFromDirectory(dumpDirectory);
@@ -295,13 +306,16 @@ namespace NetHookAnalyzer2
 				return;
 			}
 
-			var listViewItem = item.AsListViewItem();
-			itemsListView.Items.Add(listViewItem);
-			
-			if (automaticallySelectNewItemsToolStripMenuItem.Checked)
+			itemsListView.Invoke( ( MethodInvoker ) delegate ()
 			{
-				SelectLastItem();
-			}
+				var listViewItem = item.AsListViewItem();
+				itemsListView.Items.Add( listViewItem );
+
+				if ( automaticallySelectNewItemsToolStripMenuItem.Checked )
+				{
+					SelectLastItem();
+				}
+			} );
 		}
 
 		void OnFolderWatcherCreated(object sender, FileSystemEventArgs e)

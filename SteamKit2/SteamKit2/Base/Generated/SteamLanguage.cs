@@ -412,6 +412,7 @@ namespace SteamKit2
 		FBSBootstrapperGetPackageChunkResponse = 1131,
 		FBSBootstrapperPackageTransferProgress = 1132,
 		FBSRestartBootstrapper = 1133,
+		FBSPauseFrozenDumps = 1134,
 		BaseFileXfer = 1200,
 		FileXferRequest = 1200,
 		FileXferResponse = 1201,
@@ -428,6 +429,8 @@ namespace SteamKit2
 		BaseBS = 1400,
 		BSPurchaseStart = 1401,
 		BSPurchaseResponse = 1402,
+		BSAuthenticateCCTrans = 1403,
+		BSAuthenticateCCTransResponse = 1404,
 		BSSettleComplete = 1406,
 		BSInitPayPalTxn = 1408,
 		BSInitPayPalTxnResponse = 1409,
@@ -1070,6 +1073,8 @@ namespace SteamKit2
 		AMFundedPayment = 4418,
 		AMFundedPaymentResponse = 4419,
 		AMRequestPersonaUpdateForChatServer = 4420,
+		AMPerfectWorldPayment = 4421,
+		AMPerfectWorldPaymentResponse = 4422,
 		BasePSRange = 5000,
 		PSCreateShoppingCart = 5001,
 		PSCreateShoppingCartResponse = 5002,
@@ -1340,6 +1345,7 @@ namespace SteamKit2
 		ClientNetworkingCertRequestResponse = 5622,
 		ClientChallengeRequest = 5623,
 		ClientChallengeResponse = 5624,
+		BadgeCraftedNotification = 5625,
 		BaseMDS = 5800,
 		AMToMDSGetDepotDecryptionKey = 5812,
 		MDSToAMGetDepotDecryptionKeyResponse = 5813,
@@ -1407,6 +1413,8 @@ namespace SteamKit2
 		ClientMMSSetRatelimitPolicyOnClient = 6625,
 		ClientMMSGetLobbyStatus = 6626,
 		ClientMMSGetLobbyStatusResponse = 6627,
+		MMSGetLobbyList = 6628,
+		MMSGetLobbyListResponse = 6629,
 		NonStdMsgBase = 6800,
 		NonStdMsgMemcached = 6801,
 		NonStdMsgHTTPServer = 6802,
@@ -2239,6 +2247,22 @@ namespace SteamKit2
 		PurchaseCannotBeReplayed = 65,
 		DelayedCompletion = 66,
 		BundleTypeCannotBeGifted = 67,
+		BlockedByUSGov = 68,
+		ItemsReservedForCommercialUse = 69,
+		GiftAlreadyOwned = 70,
+		GiftInvalidForRecipientRegion = 71,
+		GiftPricingImbalance = 72,
+		GiftRecipientNotSpecified = 73,
+		ItemsNotAllowedForCommercialUse = 74,
+		BusinessStoreCountryCodeMismatch = 75,
+		UserAssociatedWithManyCafes = 76,
+		UserNotAssociatedWithCafe = 77,
+		AddressInvalid = 78,
+		CreditCardNumberInvalid = 79,
+		CannotShipToMilitaryPostOffice = 80,
+		BillingNameInvalidResemblesCreditCard = 81,
+		PaymentMethodTemporarilyUnavailable = 82,
+		PaymentMethodNotSupportedForProduct = 83,
 	}
 	public enum EIntroducerRouting
 	{
@@ -2383,7 +2407,9 @@ namespace SteamKit2
 		Store = 16,
 		Localization = 17,
 		Broadcastgamedata = 18,
-		Max = 19,
+		Computed = 19,
+		Albummetadata = 20,
+		Max = 21,
 	}
 	public enum EContentDownloadSourceType
 	{
@@ -2865,7 +2891,7 @@ namespace SteamKit2
 		OSX = 2,
 		PS3 = 4,
 		Linux = 8,
-		Reserved2 = 16,
+		Switch = 16,
 		Android = 32,
 		IPhoneOS = 64,
 		All = -1,
@@ -2993,6 +3019,7 @@ namespace SteamKit2
 	{
 		NotScanned = 0,
 		VeryUnlikely = 1,
+		Unlikely = 30,
 		Possible = 50,
 		Likely = 75,
 		VeryLikely = 100,
@@ -3200,6 +3227,24 @@ namespace SteamKit2
 		Default = 1,
 		Far = 2,
 		Worldwide = 3,
+	}
+	public enum ESteamIPv6ConnectivityProtocol
+	{
+		Invalid = 0,
+		Http = 1,
+		Udp = 2,
+	}
+	public enum ESteamIPv6ConnectivityState
+	{
+		Unknown = 0,
+		Good = 1,
+		Bad = 2,
+	}
+	public enum ESteamRealm
+	{
+		Unknown = 0,
+		SteamGlobal = 1,
+		SteamChina = 2,
 	}
 	public enum EUdpPacketType : byte
 	{
