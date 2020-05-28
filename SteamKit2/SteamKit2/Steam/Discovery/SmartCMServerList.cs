@@ -58,7 +58,7 @@ namespace SteamKit2.Discovery
             }
             
             listLock = new object();
-            BadConnectionMemoryTimeSpan = TimeSpan.FromMinutes( 5 );
+            BadConnectionMemoryTimeSpan = TimeSpan.FromMinutes( 15 );
         }
 
         readonly SteamConfiguration configuration;
