@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Text;
 using ProtoBuf;
 using SteamKit2.Internal;
-using SteamKit2.Unified.Internal;
 
 namespace SteamKit2
 {
@@ -128,7 +127,7 @@ namespace SteamKit2
                 this.OutOfGameSecsPerHeartbeat = resp.out_of_game_heartbeat_seconds;
                 this.InGameSecsPerHeartbeat = resp.in_game_heartbeat_seconds;
 
-                this.PublicIP = NetHelpers.GetIPAddress( resp.deprecated_public_ip );
+                this.PublicIP = resp.public_ip?.GetIPAddress();
 
                 this.ServerTime = DateUtils.DateTimeFromUnixTime( resp.rtime32_server_time );
 
@@ -290,6 +289,27 @@ namespace SteamKit2
 
                 FacebookID = msg.facebook_id;
                 FacebookName = msg.facebook_name;
+            }
+        }
+
+        /// <summary>
+        /// This callback is received when email information is recieved from the network.
+        /// </summary>
+        public sealed class EmailAddrInfoCallback : CallbackMsg
+        {
+            /// <summary>
+            /// Gets the email address of this account.
+            /// </summary>
+            public string EmailAddress { get; private set; }
+            /// <summary>
+            /// Gets a value indicating validated email or not.
+            /// </summary>
+            public bool IsValidated { get; private set; }
+
+            internal EmailAddrInfoCallback(CMsgClientEmailAddrInfo msg)
+            {
+                EmailAddress = msg.email_address;
+                IsValidated = msg.email_is_validated;
             }
         }
 

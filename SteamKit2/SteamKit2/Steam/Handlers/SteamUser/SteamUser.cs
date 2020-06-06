@@ -97,7 +97,7 @@ namespace SteamKit2
             /// <value>
             /// Base64-encoded MachineID.
             /// </value>
-            public string MachineID { get; set; }
+            public string? MachineID { get; set; }
 
             /// <summary>
             /// Gets or sets a value indicating whether to request the Steam2 ticket.
@@ -274,11 +274,13 @@ namespace SteamKit2
                 { EMsg.ClientSessionToken, HandleSessionToken },
                 { EMsg.ClientUpdateMachineAuth, HandleUpdateMachineAuth },
                 { EMsg.ClientAccountInfo, HandleAccountInfo },
+                { EMsg.ClientEmailAddrInfo, HandleEmailAddrInfo },
                 { EMsg.ClientWalletInfoUpdate, HandleWalletInfo },
                 { EMsg.ClientRequestWebAPIAuthenticateUserNonceResponse, HandleWebAPIUserNonce },
                 { EMsg.ClientMarketingMessageUpdate2, HandleMarketingMessageUpdate },
             };
         }
+
 
         /// <summary>
         /// Logs the client into the Steam3 network.
@@ -317,12 +319,21 @@ namespace SteamKit2
 
             if ( details.LoginID.HasValue )
             {
-                logon.Body.deprecated_obfustucated_private_ip = details.LoginID.Value;
+                // TODO: Support IPv6 login ids?
+                logon.Body.obfuscated_private_ip = new CMsgIPAddress
+                {
+                    v4 = details.LoginID.Value
+                };
             }
             else
             {
-                uint localIp = NetHelpers.GetIPAddress( this.Client.LocalIP! );
-                logon.Body.deprecated_obfustucated_private_ip = localIp ^ MsgClientLogon.ObfuscationMask;
+                logon.Body.obfuscated_private_ip = NetHelpers.GetMsgIPAddress( this.Client.LocalIP! ).ObfuscatePrivateIP();
+            }
+
+            // Legacy field, Steam client still sets it
+            if ( logon.Body.obfuscated_private_ip.ShouldSerializev4() )
+            {
+                logon.Body.deprecated_obfustucated_private_ip = logon.Body.obfuscated_private_ip.v4;
             }
 
             logon.ProtoHeader.client_sessionid = 0;
@@ -572,6 +583,12 @@ namespace SteamKit2
 
             var callback = new AccountInfoCallback( accInfo.Body );
             this.Client.PostCallback( callback );
+        }
+        void HandleEmailAddrInfo(IPacketMsg packetMsg)
+        {
+            var emailAddrInfo = new ClientMsgProtobuf<CMsgClientEmailAddrInfo>(packetMsg);
+            var callback = new EmailAddrInfoCallback(emailAddrInfo.Body);
+            this.Client.PostCallback(callback);
         }
         void HandleWalletInfo( IPacketMsg packetMsg )
         {

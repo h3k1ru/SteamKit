@@ -41,10 +41,16 @@ namespace SteamKit2.Internal
         public SmartCMServerList Servers => Configuration.ServerList;
 
         /// <summary>
-        /// Returns the the local IP of this client.
+        /// Returns the local IP of this client.
         /// </summary>
         /// <returns>The local IP.</returns>
         public IPAddress? LocalIP => connection?.GetLocalIP();
+
+        /// <summary>
+        /// Returns the current endpoint this client is connected to.
+        /// </summary>
+        /// <returns>The current endpoint.</returns>
+        public EndPoint? CurrentEndPoint => connection?.CurrentEndPoint;
 
         /// <summary>
         /// Gets the public IP address of this client. This value is assigned after a logon attempt has succeeded.
@@ -160,7 +166,7 @@ namespace SteamKit2.Internal
         /// <param name="proxy">
         /// The proxy server that should be used to connect to CM server (only WebSocketConnection is supported).
         /// </param>
-        public void Connect( ServerRecord? cmServer = null, WebProxy? proxy = null )
+        public void Connect( ServerRecord? cmServer = null, IWebProxy? proxy = null )
         {
             lock ( connectionLock )
             {
@@ -560,7 +566,7 @@ namespace SteamKit2.Internal
                 SteamID = logonResp.ProtoHeader.steamid;
 
                 CellID = logonResp.Body.cell_id;
-                PublicIP = NetHelpers.GetIPAddress( logonResp.Body.deprecated_public_ip );
+                PublicIP = logonResp.Body.public_ip.GetIPAddress();
                 IPCountryCode = logonResp.Body.ip_country_code;
 
                 int hbDelay = logonResp.Body.out_of_game_heartbeat_seconds;
@@ -572,7 +578,10 @@ namespace SteamKit2.Internal
             }
             else if ( logonResult == EResult.TryAnotherCM || logonResult == EResult.ServiceUnavailable )
             {
-                Servers.TryMark( connection.CurrentEndPoint, connection.ProtocolTypes, ServerQuality.Bad );
+                if ( connection?.CurrentEndPoint != null )
+                {
+                    Servers.TryMark( connection.CurrentEndPoint, connection.ProtocolTypes, ServerQuality.Bad );
+                }
             }
         }
         void HandleLoggedOff( IPacketMsg packetMsg )

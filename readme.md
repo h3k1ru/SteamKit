@@ -56,5 +56,5 @@ Note: If you're using the NuGet package, the protobuf-net dependency _should_ be
 
 ## Contact
 
-IRC: [irc.gamesurge.net / #opensteamworks](irc://irc.gamesurge.net/opensteamworks)
+IRC: irc.freenode.net / #steamkit ([join via webchat](https://webchat.freenode.net/#steamkit?nick=steamkit-user))
 
