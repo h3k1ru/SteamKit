@@ -12,6 +12,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+
+[assembly: AssemblyVersion("2.3.1")]
 [assembly: AssemblyTitle( "SteamKit2 ")]
 [assembly: AssemblyDescription( ".NET library that aims to interoperate with the Steam network." )]
 [assembly: AssemblyConfiguration( "" )]
