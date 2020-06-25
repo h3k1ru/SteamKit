@@ -281,11 +281,6 @@ namespace SteamKit2
             };
         }
 
-        static SteamUser()
-        {
-            HardwareUtils.Init();
-        }
-
 
         /// <summary>
         /// Logs the client into the Steam3 network.
@@ -358,7 +353,8 @@ namespace SteamKit2
             // we're now using the latest steamclient package version, this is required to get a proper sentry file for steam guard
             logon.Body.client_package_version = 1771; // todo: determine if this is still required
             logon.Body.supports_rate_limit_response = true;
-            logon.Body.machine_id = string.IsNullOrEmpty(details.MachineID) ? HardwareUtils.GetMachineID() : Convert.FromBase64String(details.MachineID);
+            // logon.Body.machine_id = string.IsNullOrEmpty(details.MachineID) ? HardwareUtils.GetMachineID() : Convert.FromBase64String(details.MachineID);
+            logon.Body.machine_id = HardwareUtils.GenerateMachineID();
 
             // steam guard 
             logon.Body.auth_code = details.AuthCode;
@@ -413,7 +409,7 @@ namespace SteamKit2
             logon.Body.client_language = details.ClientLanguage;
             logon.Body.cell_id = details.CellID ?? Client.Configuration.CellID;
 
-            logon.Body.machine_id = HardwareUtils.GetMachineID();
+            logon.Body.machine_id = HardwareUtils.GenerateMachineID();
 
             this.Client.Send( logon );
         }
