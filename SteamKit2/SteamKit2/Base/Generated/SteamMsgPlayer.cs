@@ -2691,7 +2691,7 @@ namespace SteamKit2.Internal
         k_ENotificationSettingNever = 2,
     }
 
-    public interface IPlayer
+    public partial interface IPlayer
     {
         CPlayer_GetMutualFriendsForIncomingInvites_Response GetMutualFriendsForIncomingInvites(CPlayer_GetMutualFriendsForIncomingInvites_Request request);
         CPlayer_GetOwnedGames_Response GetOwnedGames(CPlayer_GetOwnedGames_Request request);

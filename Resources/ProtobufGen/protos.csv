@@ -1,6 +1,8 @@
 ProtoDir,ProtoFileName,ClassFilePath,Namespace
 steam,content_manifest.proto,ContentManifest.cs,SteamKit2.Internal
 steam,encrypted_app_ticket.proto,SteamMsgAppTicket.cs,SteamKit2.Internal
+steam,loyaltystore.proto,SteamLoyaltyStore.cs,SteamKit2.Internal
+steam,loyaltystore_reviewaward.proto,SteamLoyaltyStoreReviewAward.cs,SteamKit2.Internal
 steam,steammessages_accounthardware.steamclient.proto,SteamMsgAccountHardware.cs,SteamKit2.Internal
 steam,steammessages_auth.steamclient.proto,SteamMsgAuth.cs,SteamKit2.Internal
 steam,steammessages_base.proto,SteamMsgBase.cs,SteamKit2.Internal
@@ -85,6 +87,7 @@ tf2,gcsystemmsgs.proto,GC\TF2\SteamMsgGCSystem.cs,SteamKit2.GC.TF2.Internal
 tf2,steammessages.proto,GC\TF2\SteamMsgBase.cs,SteamKit2.GC.TF2.Internal
 tf2,tf_gcmessages.proto,GC\TF2\MsgGC.cs,SteamKit2.GC.TF2.Internal
 underlords,steammessages.proto,GC\Underlords\SteamMsgBase.cs,SteamKit2.GC.Underlords.Internal
+underlords,dac_gamemessages.proto,GC\Underlords\MsgGame.cs,SteamKit2.GC.Underlords.Internal
 underlords,dac_gcmessages_common.proto,GC\Underlords\MsgGCCommon.cs,SteamKit2.GC.Underlords.Internal
 underlords,dac_gcmessages_client.proto,GC\Underlords\MsgGCClient.cs,SteamKit2.GC.Underlords.Internal
 underlords,dac_gcmessages_server.proto,GC\Underlords\MsgGCServer.cs,SteamKit2.GC.Underlords.Internal
