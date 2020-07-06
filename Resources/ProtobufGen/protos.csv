@@ -1,8 +1,10 @@
 ProtoDir,ProtoFileName,ClassFilePath,Namespace
 steam,content_manifest.proto,ContentManifest.cs,SteamKit2.Internal
 steam,encrypted_app_ticket.proto,SteamMsgAppTicket.cs,SteamKit2.Internal
+steam,community.proto,SteamCommunity.cs,SteamKit2.Internal
 steam,loyaltystore.proto,SteamLoyaltyStore.cs,SteamKit2.Internal
 steam,loyaltystore_reviewaward.proto,SteamLoyaltyStoreReviewAward.cs,SteamKit2.Internal
+steam,usernews.proto,SteamUserNews.cs,SteamKit2.Internal
 steam,steammessages_accounthardware.steamclient.proto,SteamMsgAccountHardware.cs,SteamKit2.Internal
 steam,steammessages_auth.steamclient.proto,SteamMsgAuth.cs,SteamKit2.Internal
 steam,steammessages_base.proto,SteamMsgBase.cs,SteamKit2.Internal

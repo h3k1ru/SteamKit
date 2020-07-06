@@ -923,6 +923,7 @@ namespace SteamKit2.GC.Dota.Internal
         k_EMsgClientToGCUnderDraftRollBackBenchResponse = 8741,
         k_EMsgServerToGCGetGuildContracts = 8744,
         k_EMsgServerToGCGetGuildContractsResponse = 8745,
+        k_EMsgGCToClientGuildMembersDataUpdated = 8747,
     }
 
 }

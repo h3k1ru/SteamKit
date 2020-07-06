@@ -175,46 +175,6 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetcompleted_game_streak() => __pbn__completed_game_streak = null;
         private uint? __pbn__completed_game_streak;
 
-        [global::ProtoBuf.ProtoMember(28)]
-        public uint teaching
-        {
-            get { return __pbn__teaching.GetValueOrDefault(); }
-            set { __pbn__teaching = value; }
-        }
-        public bool ShouldSerializeteaching() => __pbn__teaching != null;
-        public void Resetteaching() => __pbn__teaching = null;
-        private uint? __pbn__teaching;
-
-        [global::ProtoBuf.ProtoMember(29)]
-        public uint leadership
-        {
-            get { return __pbn__leadership.GetValueOrDefault(); }
-            set { __pbn__leadership = value; }
-        }
-        public bool ShouldSerializeleadership() => __pbn__leadership != null;
-        public void Resetleadership() => __pbn__leadership = null;
-        private uint? __pbn__leadership;
-
-        [global::ProtoBuf.ProtoMember(30)]
-        public uint friendly
-        {
-            get { return __pbn__friendly.GetValueOrDefault(); }
-            set { __pbn__friendly = value; }
-        }
-        public bool ShouldSerializefriendly() => __pbn__friendly != null;
-        public void Resetfriendly() => __pbn__friendly = null;
-        private uint? __pbn__friendly;
-
-        [global::ProtoBuf.ProtoMember(31)]
-        public uint forgiving
-        {
-            get { return __pbn__forgiving.GetValueOrDefault(); }
-            set { __pbn__forgiving = value; }
-        }
-        public bool ShouldSerializeforgiving() => __pbn__forgiving != null;
-        public void Resetforgiving() => __pbn__forgiving = null;
-        private uint? __pbn__forgiving;
-
         [global::ProtoBuf.ProtoMember(38)]
         public uint account_disabled_until_date
         {

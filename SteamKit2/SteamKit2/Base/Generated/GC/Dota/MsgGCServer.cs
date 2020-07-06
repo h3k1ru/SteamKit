@@ -245,16 +245,6 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetfirst_blood_happened() => __pbn__first_blood_happened = null;
         private bool? __pbn__first_blood_happened;
 
-        [global::ProtoBuf.ProtoMember(9)]
-        public bool legacy_mass_disconnect
-        {
-            get { return __pbn__legacy_mass_disconnect.GetValueOrDefault(); }
-            set { __pbn__legacy_mass_disconnect = value; }
-        }
-        public bool ShouldSerializelegacy_mass_disconnect() => __pbn__legacy_mass_disconnect != null;
-        public void Resetlegacy_mass_disconnect() => __pbn__legacy_mass_disconnect = null;
-        private bool? __pbn__legacy_mass_disconnect;
-
         [global::ProtoBuf.ProtoMember(10)]
         public CMsgPoorNetworkConditions poor_network_conditions { get; set; }
 
@@ -1143,16 +1133,6 @@ namespace SteamKit2.GC.Dota.Internal
         public bool ShouldSerializeserver_version() => __pbn__server_version != null;
         public void Resetserver_version() => __pbn__server_version = null;
         private uint? __pbn__server_version;
-
-        [global::ProtoBuf.ProtoMember(21)]
-        public bool legacy_mass_disconnect
-        {
-            get { return __pbn__legacy_mass_disconnect.GetValueOrDefault(); }
-            set { __pbn__legacy_mass_disconnect = value; }
-        }
-        public bool ShouldSerializelegacy_mass_disconnect() => __pbn__legacy_mass_disconnect != null;
-        public void Resetlegacy_mass_disconnect() => __pbn__legacy_mass_disconnect = null;
-        private bool? __pbn__legacy_mass_disconnect;
 
         [global::ProtoBuf.ProtoMember(35)]
         public CMsgPoorNetworkConditions poor_network_conditions { get; set; }

@@ -973,12 +973,21 @@ namespace SteamKit2.Internal
 
     }
 
+    [global::ProtoBuf.ProtoContract()]
+    public partial class NotImplemented : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    }
+
     public interface ILoyaltyRewards
     {
         CLoyaltyRewards_GetPointsForSpend_Response GetPointsForSpend(NotImplemented request);
         CLoyaltyRewards_GetSummary_Response GetSummary(CLoyaltyRewards_GetSummary_Request request);
         CLoyaltyRewards_RedeemPoints_Response RedeemPoints(CLoyaltyRewards_RedeemPoints_Request request);
-        CLoyaltyRewards_RedeemPoints_Response RedeemPointsForBadgeLevel(CLoyaltyRewards_RedeemPoints_Request request);
+        CLoyaltyRewards_RedeemPoints_Response RedeemPointsForBadgeLevel(CLoyaltyRewards_RedeemPointsForBadgeLevel_Request request);
         CLoyaltyRewards_RedeemPoints_Response RedeemPointsToUpgradeItem(CLoyaltyRewards_RedeemPoints_Request request);
         CLoyaltyRewards_AddReaction_Response AddReaction(CLoyaltyRewards_AddReaction_Request request);
         CLoyaltyRewards_GetReactions_Response GetReactions(CLoyaltyRewards_GetReactions_Request request);

@@ -559,6 +559,7 @@ namespace SteamKit2.GC.Dota.Internal
             RANK_TIER_UPDATED = 75,
             CUSTOM_GAME_COOLDOWN_RESTRICTED = 76,
             CREATE_LOBBY_FAILED_TOO_MUCH_PLAYTIME = 77,
+            CUSTOM_GAME_TOO_FEW_GAMES = 78,
         }
 
     }

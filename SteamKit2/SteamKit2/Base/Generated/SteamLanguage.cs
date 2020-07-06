@@ -3268,6 +3268,32 @@ namespace SteamKit2
 		SteamChina = 7,
 		SingleApp = 8,
 	}
+	[Flags]
+	public enum EUserNewsType
+	{
+		FriendAdded = 1,
+		AchievementUnlocked = 2,
+		ReceivedNewGame = 4,
+		PlayedGameFirstTime = 4,
+		JoinedGroup = 8,
+		AddedGameToWishlist = 128,
+		RecommendedGame = 256,
+		FilePublished_Screenshot = 512,
+		FilePublished_Video = 1024,
+		FilePublished_WorkshopItem = 8192,
+		UserStatus = 4096,
+		FilePublished_Collection = 8192,
+		FilePublished_WebGuide = 8192,
+		FilePublished_Art = 8192,
+		ClanAchievement = 65536,
+		PostedAnnouncement = 131072,
+		ScheduledEvent = 262144,
+		SelectedNewPOTW = 524288,
+		PromotedNewAdmin = 1048576,
+		MessageOnClanPage = 2097152,
+		CuratorRecommendedGame = 4194304,
+		FileFavorited = 16384,
+	}
 	public enum EUdpPacketType : byte
 	{
 		Invalid = 0,

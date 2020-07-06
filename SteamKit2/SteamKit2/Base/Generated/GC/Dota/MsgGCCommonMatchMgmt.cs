@@ -1281,9 +1281,6 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetpwrd_cyber_cafe_name() => __pbn__pwrd_cyber_cafe_name = null;
         private string __pbn__pwrd_cyber_cafe_name;
 
-        [global::ProtoBuf.ProtoMember(26, IsPacked = true)]
-        public global::System.Collections.Generic.List<uint> disabled_random_hero_id { get; } = new global::System.Collections.Generic.List<uint>();
-
         [global::ProtoBuf.ProtoMember(41, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
         public global::System.Collections.Generic.List<uint> disabled_random_hero_bits { get; } = new global::System.Collections.Generic.List<uint>();
 

@@ -6974,15 +6974,14 @@ namespace SteamKit2.GC.CSGO.Internal
         private int? __pbn__osversion;
 
         [global::ProtoBuf.ProtoMember(10)]
-        [global::System.ComponentModel.DefaultValue(EClientReportingVersion.k_EClientReportingVersion_SupportsSecureMode)]
-        public EClientReportingVersion clientreportversion
+        public uint clientreportversion
         {
-            get { return __pbn__clientreportversion ?? EClientReportingVersion.k_EClientReportingVersion_SupportsSecureMode; }
+            get { return __pbn__clientreportversion.GetValueOrDefault(); }
             set { __pbn__clientreportversion = value; }
         }
         public bool ShouldSerializeclientreportversion() => __pbn__clientreportversion != null;
         public void Resetclientreportversion() => __pbn__clientreportversion = null;
-        private EClientReportingVersion? __pbn__clientreportversion;
+        private uint? __pbn__clientreportversion;
 
     }
 
@@ -7184,6 +7183,7 @@ namespace SteamKit2.GC.CSGO.Internal
     [global::ProtoBuf.ProtoContract()]
     public enum EClientReportingVersion
     {
+        k_EClientReportingVersion_OldVersion = 0,
         k_EClientReportingVersion_SupportsSecureMode = 1,
     }
 
