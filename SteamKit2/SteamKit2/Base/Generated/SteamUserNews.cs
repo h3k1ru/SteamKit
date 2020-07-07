@@ -101,14 +101,15 @@ namespace SteamKit2.Internal
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1)]
-        public uint eventtype
+        [global::System.ComponentModel.DefaultValue(EEventType.Invalid)]
+        public EEventType eventtype
         {
-            get { return __pbn__eventtype.GetValueOrDefault(); }
+            get { return __pbn__eventtype ?? EEventType.Invalid; }
             set { __pbn__eventtype = value; }
         }
         public bool ShouldSerializeeventtype() => __pbn__eventtype != null;
         public void Reseteventtype() => __pbn__eventtype = null;
-        private uint? __pbn__eventtype;
+        private EEventType? __pbn__eventtype;
 
         [global::ProtoBuf.ProtoMember(2)]
         public uint eventtime
@@ -212,6 +213,43 @@ namespace SteamKit2.Internal
         public bool ShouldSerializeevent_last_mod_time() => __pbn__event_last_mod_time != null;
         public void Resetevent_last_mod_time() => __pbn__event_last_mod_time = null;
         private uint? __pbn__event_last_mod_time;
+
+        [global::ProtoBuf.ProtoContract()]
+        public enum EEventType
+        {
+            Invalid = 0,
+            FriendAdded = 1,
+            AchievementUnlocked = 2,
+            ReceivedNewGame = 3,
+            JoinedGroup = 4,
+            CommentByMe = 5,
+            FriendRemoved = 6,
+            GroupCreated = 7,
+            CommentOnMe = 8,
+            AddedGameToWishlist = 9,
+            RecommendedGame = 10,
+            ScreenshotPublished_Deprecated = 11,
+            VideoPublished_Deprecated = 12,
+            FilePublished_Screenshot = 13,
+            FilePublished_Video = 14,
+            FilePublished_WorkshopItem = 15,
+            UserStatus = 16,
+            FilePublished_Collection = 17,
+            FilePublished_GreenlightGame = 18,
+            FilePublished_WorkshopAnnouncement = 19,
+            FilePublished_WebGuide = 20,
+            FilePublished_Screenshot_Tagged = 21,
+            FilePublished_Art = 22,
+            FileFavorited = 23,
+            PlayedGameFirstTime = 30,
+            ClanAchievement = 1001,
+            PostedAnnouncement = 1002,
+            ScheduledEvent = 1003,
+            SelectedNewPOTW = 1004,
+            PromotedNewAdmin = 1005,
+            MessageOnClanPage = 1006,
+            CuratorRecommendedGame = 1007,
+        }
 
     }
 

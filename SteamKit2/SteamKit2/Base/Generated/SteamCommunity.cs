@@ -546,14 +546,15 @@ namespace SteamKit2.Internal
         private ulong? __pbn__steamid;
 
         [global::ProtoBuf.ProtoMember(2)]
-        public uint comment_thread_type
+        [global::System.ComponentModel.DefaultValue(k_ECommentThreadType.Invalid)]
+        public k_ECommentThreadType comment_thread_type
         {
-            get { return __pbn__comment_thread_type.GetValueOrDefault(); }
+            get { return __pbn__comment_thread_type ?? k_ECommentThreadType.Invalid; }
             set { __pbn__comment_thread_type = value; }
         }
         public bool ShouldSerializecomment_thread_type() => __pbn__comment_thread_type != null;
         public void Resetcomment_thread_type() => __pbn__comment_thread_type = null;
-        private uint? __pbn__comment_thread_type;
+        private k_ECommentThreadType? __pbn__comment_thread_type;
 
         [global::ProtoBuf.ProtoMember(3, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
         public ulong gidfeature
@@ -605,6 +606,32 @@ namespace SteamKit2.Internal
         public bool ShouldSerializesuppress_notifications() => __pbn__suppress_notifications != null;
         public void Resetsuppress_notifications() => __pbn__suppress_notifications = null;
         private bool? __pbn__suppress_notifications;
+
+        [global::ProtoBuf.ProtoContract()]
+        public enum k_ECommentThreadType
+        {
+            Invalid = 0,
+            Screenshot_Deprecated = 1,
+            WorkshopAccount_Developer = 2,
+            WorkshopAccount_Public = 3,
+            PublishedFile_Developer = 4,
+            PublishedFile_Public = 5,
+            Test = 6,
+            ForumTopic = 7,
+            Recommendation = 8,
+            Video_Deprecated = 9,
+            Profile = 10,
+            NewsPost = 11,
+            Clan = 12,
+            ClanAnnouncement = 13,
+            ClanEvent = 14,
+            UserStatusPublished = 15,
+            UserReceivedNewGame = 16,
+            PublishedFile_Announcement = 17,
+            ModeratorMessage = 18,
+            ClanCuratedApp = 19,
+            Max = 20,
+        }
 
     }
 
